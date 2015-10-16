@@ -396,10 +396,13 @@ def find_best_shifts_rec(wordlist, text, start):
     returns: list of tuples.  each tuple is (position in text, amount of shift)
     """
     ### TODO.
-    for shift in range(-27,27):
-        s = apply_shifts(text, [(start,shift)])
+
+    shifts = []
+    
+    for shift in range(0,27):
+        s = apply_shifts(text, [(start,-shift)])
         space_location = s.find(' ',start+1)
-      
+        
         
         print "shift = ",shift
         print "s = ",s
@@ -417,33 +420,45 @@ def find_best_shifts_rec(wordlist, text, start):
             for word in potential_words:
                 if word.lower() in wordlist:
                     ##add code to store shift and start
-                    print "running find_best_shifts on (wordlist", s,space_location 
-                    find_best_shifts_rec(wordlist,s,space_location)
+                    shifts.append([start,shift])
+                    print shifts 
+                    print "running find_best_shifts on (wordlist", s,space_location+1 
+                    find_best_shifts_rec(wordlist,s,space_location+1)
                 else:
                     print "Potential words are not in wordlist"
                     
         if space_location == -1:
-            start_to_end = s[start:].split()
+            start_to_end = s[start:]
             print start_to_end
-            for i in start_to_end:
-                print i
-                if i in wordlist:
-                 print 'true'
-                 shifts = [start,shift]
-                 print shifts
-                 return shifts
+        
+            print 'Checking if i is in wordlist: '
+            print 'i is equal to --> ',start_to_end
+            if start_to_end.lower() in wordlist:
+                print 'true'
+                shifts = shifts + [start,shift]
+                print shifts
+                return shifts
                  
             else:
                 print 's[start:].lower() Not in wordlist'
         
-    return "Start position or previous shift is incorrect"
     return shifts
 
-    
+
+##Need to add way to keep track of all the shifts
 
 
-print find_best_shifts_rec(wordlist,'Pmttwhdwztl',0)
+best_shifts = find_best_shifts_rec(wordlist,'JuFYkaolfapXAobyjXlcXBib qof XPebbm',0)
+print 'Best shifts are ',best_shifts
 
+print 'Best shifts applied to encoded string = ', apply_shifts('JuFYkaolfapXAobyjXlcXBib qof XPebbm',best_shifts)
+
+
+print '"Do Androids Dream of Electric Sheep" with shifts of (0,6) and (3,18) = ', apply_shifts('Do Androids Dream of Electric Sheep', [(0,6), (3, 18)])
+
+print '""Do Androids Dream of Electric Sheep" with INVERSE shifts applied **NOTE CAPITALIZATION ISSUES** = ', apply_shifts('JuFYkaolfapXAobyjXlcXBib qof XPebbm', [(0,-6), (3, -18)])
+
+##Capitalization issues
 
 
 def decrypt_fable(text):
